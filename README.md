@@ -10,6 +10,7 @@ Linux 和 Macos 请下载源码 使用Python运行
 ## 使用说明
 cookie.txt为配置地址，第一行为账号cookie值，直接F12全部复制就可以<br>
 第二行为ticketid，同样也是F12查看 https://www.allcpp.cn/allcpp/ticket/getTicketTypeList.do?eventMainId=xxxx 的响应 一般为4位数字<br>
+以此类推，第三行第四行也是这样<br>
 本程序支持多线程 多账户 （默认三线程）
 
 ## 项目问题
