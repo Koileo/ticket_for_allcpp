@@ -7,7 +7,7 @@ import random
 import secrets
 import string
 import hashlib
-
+import timentp
 # 定义一个全局锁用于线程同步
 thread_dict = {}
 cookie_file_path = 'cookie.txt'
@@ -247,6 +247,12 @@ def schedule_script_at_timestamp(target_timestamp_ms,cookies, ticket_ids):
 
 
 def main():
+    differ = timentp.timeconvey()
+    if differ > 0 :
+        print(f"\033[1;31;47m主人你的时间慢了{abs(differ)}秒\033[0m")
+        print("\033[1;31;47m主人你的时间滞后了哦，请同步时间\033[0m")
+    else:
+        print(f"\033[1;31;47m主人你的时间快了{abs(differ)}秒\033[0m")
     cookies, ticket_ids = read_cookies_and_tickets_from_file()
     print(ticket_ids)
     i=0
