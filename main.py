@@ -10,14 +10,14 @@ import hashlib
 
 # 定义一个全局锁用于线程同步
 thread_dict = {}
-file_path = 'cookie.txt'
+cookie_file_path = 'cookie.txt'
+config_file_path = 'config.txt'
 num_threads_per_ticket = 3
 headers = {
             'authority': 'www.allcpp.cn',
             'accept': 'application/json, text/plain, */*',
             'accept-language': 'zh-CN,zh;q=0.9',
             'content-type': 'application/json;charset=UTF-8',
-            # 'cookie': 'token=G/KtGUQgrcUmdxYW7CgIxSxjdQugb2yxHh1Z+tU++xHgJ7HSYHIqXCjZ0j6FHg0hepGs2whmRnCvugVLYTEo+1JzUDFJ0M/5ksd6d4jiayPkuaEJacp8GJSCYJiZeX93hfzSgWZRvxbB1TlK2HHbAfZCfMMx1J6odGf31gaPtuY=; JALKSJFJASKDFJKALSJDFLJSF=1322439377c3f6bb8e2fcd4f6280ac7078887d7358122.230.23.136_63170160183; acw_tc=2ff617a416928341513954012ee495d8ff77ef763e77c2e07ca827248c; cdn_sec_tc=2ff617a416928341513954012ee495d8ff77ef763e77c2e07ca827248c; JSESSIONID=3CF6CB48AF6304AC6C8706C4E9D05CBB; Hm_lvt_75e110b2a3c6890a57de45bd2882ec7c=1692745371,1692746156,1692795604,1692834157; Hm_lpvt_75e110b2a3c6890a57de45bd2882ec7c=1692834184',
             'origin': 'https://cp.allcpp.cn',
             'referer': 'https://cp.allcpp.cn/',
             'sec-ch-ua': '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"',
@@ -60,7 +60,7 @@ def read_cookies_and_tickets_from_file():
     ticket_id = []
     ticket_ids = []
     try:
-        with open(file_path, 'r',encoding='utf-8') as file:
+        with open(cookie_file_path, 'r',encoding='utf-8') as file:
             lines = file.readlines()
             i = 0
             while i < len(lines):
@@ -70,7 +70,7 @@ def read_cookies_and_tickets_from_file():
                     ticket_id.append(lines[i].strip())  # 使用append方法将元素添加到列表
                     i += 1
     except FileNotFoundError:
-        print(f"File '{file_path}' not found.")
+        print(f"File '{cookie_file_path}' not found.")
     for item in ticket_id:
     # 使用逗号分割字符串并添加到输出列表
         ticket_ids.append(item.split(','))
