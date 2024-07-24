@@ -13,6 +13,12 @@ cookie.txt为配置地址，第一行为账号cookie值，直接F12全部复制�
 以此类推，第三行第四行也是这样<br>
 本程序支持多线程 多账户 （默认三线程）
 
+## 未来功能
+- [] 微信通知
+- [] 程序外部配置空隔时间和线程数
+- [] linux 和mac 打包
+
+
 ## 项目问题
 反馈程序BUG或者提新功能建议： [点此链接向项目提出反馈BUG](https://github.com/Koileo/ticket_for_allcpp/issues)
 
