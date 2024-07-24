@@ -3,16 +3,16 @@ import requests
 import json
 import threading
 import time
-import random
 import secrets
 import string
 import hashlib
-import timentp
+import ntplib
+import configparser
+import os
 # 定义一个全局锁用于线程同步
 thread_dict = {}
 cookie_file_path = 'cookie.txt'
 config_file_path = 'config.txt'
-num_threads_per_ticket = 3
 headers = {
             'authority': 'www.allcpp.cn',
             'accept': 'application/json, text/plain, */*',
@@ -28,6 +28,23 @@ headers = {
             'sec-fetch-site': 'same-site',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
         }
+
+# 读取配置文件
+def getConfig(filename, section, option):
+    conf = configparser.ConfigParser()
+    conf.read(filename)
+    config = conf.get(section, option)
+    return config
+
+def timeconvey(ntp):
+    chec = ntplib.NTPClient() 
+    response = chec.request(ntp) 
+    timestamp = response.tx_time
+    timestamp_local = time.time()
+    #print(timestamp_local)
+    #print(timestamp)
+    differ= timestamp - timestamp_local
+    return differ
 
 def sign_for_post(ticketid):
     timestamp = str(int(time.time())) ##"1682074579"
@@ -183,13 +200,13 @@ def process_thread(ticketid,cookie_str):
                     thread_to_close.join()
                 return True
             else:
-                with open(f"output_ticket_{ticketid}_{ids_str}_attempt_{i}.txt", "a") as output_file:
+                with open(f"output_ticket_{ticketid}_{ids_str}_attempt.txt", "a") as output_file:
                     output_file.write(resp)
-                url_wx = 'https://www.allcpp.cn/allcpp/ticket/buyTicketWeixin.do?ticketTypeId=' + str(ticketid) + '&count=' + str(
-                    id_count) + '&' + retn_params + '&payType=0'+'&purchaserIds=' + ids_str
-                print(url_wx)
+                    url = 'https://www.allcpp.cn/allcpp/ticket/buyTicketAliWapPay.do?ticketTypeId=' + str(ticketid) + '&count=' + str(
+                id_count) + '&' + retn_params +'&purchaserIds=' + ids_str
+                print(url)
                 response = requests.post(
-                    url=url_wx,
+                    url=url,
                     cookies=cookies,
                     headers=headers,
                     json=json_data,
@@ -200,20 +217,18 @@ def process_thread(ticketid,cookie_str):
                 if is_success == True:
                         i = 3
                         print(f"Thread for ticket {ticketid} succeeded")
-                        with open(f"output_ticket_{ticketid}_{ids_str}_wx.txt", "a") as output_file:
+                        with open(f"output_ticket_{ticketid}_{ids_str}.txt", "a") as output_file:
                             output_file.write(resp)
                         threads_to_close = [thread for thread in threads if thread._target == process_thread and thread._args[0] == ticketid and thread._args[1] == cookies]
                         for thread_to_close in threads_to_close[:2]:  # 关闭同类型的前两个线程
                             thread_to_close.join()
                         return True
                 else:
-                    with open(f"output_ticket_{ticketid}_{ids_str}_wx_attempt_{i}.txt", "a") as output_file:
+                    with open(f"output_ticket_{ticketid}_{ids_str}_attempt.txt", "a") as output_file:
                         output_file.write(resp)
                     print(resp)
                     print(type(resp))
-                    t = random.random()
-                    print (t)
-                    time.sleep(t)
+                    time.sleep(sleep_time)
 
 
 
@@ -222,10 +237,11 @@ def start(cookies, ticket_ids):
 
     for i in range(len(cookies)):
         for j in range(len(ticket_ids[i])):
-            ticket = ticket_ids[i][j]
-            cook = cookies[i]
-            thread = threading.Thread(target=process_thread, args=(ticket, cook))
-            thread.start()
+             for _ in range(num_thread):
+                ticket = ticket_ids[i][j]
+                cook = cookies[i]
+                thread = threading.Thread(target=process_thread, args=(ticket, cook))
+                thread.start()
 
 
 
@@ -247,7 +263,13 @@ def schedule_script_at_timestamp(target_timestamp_ms,cookies, ticket_ids):
 
 
 def main():
-    differ = timentp.timeconvey()
+    ntp = getConfig("config.txt", 'time', 'ntp')
+    global sleep_time
+    sleep_time = float(getConfig("config.txt", 'ticket', 'sleep'))
+    global num_thread
+    num_thread = int(getConfig("config.txt", 'ticket', 'num_thread'))
+
+    differ = timeconvey(ntp)
     if differ > 0 :
         print(f"\033[1;31;47m主人你的时间慢了{abs(differ)}秒\033[0m")
         print("\033[1;31;47m主人你的时间滞后了哦，请同步时间\033[0m")
@@ -261,17 +283,16 @@ def main():
         print(ifn)
         print(ticket_ids[i])
         i+=1
-    if input('T or F \n') == 'T':
+    if input('正确(回复T) or 错误(回复F) \n') == 'T':
         print("1.定时 2.捡漏\n")
         if input()== '1':
-            target_timestamp_ms = int(input('输入开始时间戳:'))
+            target_timestamp_ms = int(input('输入开始时间戳(毫秒):'))
             schedule_script_at_timestamp(target_timestamp_ms,cookies, ticket_ids)
         else:
             start(cookies, ticket_ids)
     else: 
         exit
 
-    print("主人好了哦")
 
 if __name__ == "__main__":
     main()

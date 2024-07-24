@@ -1,3 +1,7 @@
-sleep=1000
-thread_num=3
-token=
+[time]
+ntp = ntp.aliyun.com
+
+[ticket]
+sleep = 0.1
+num_thread = 3
+
