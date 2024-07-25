@@ -2,6 +2,6 @@
 ntp = ntp.aliyun.com
 
 [ticket]
-sleep = 0.1
+sleep = 1
 num_thread = 3
 
