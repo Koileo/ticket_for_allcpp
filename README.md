@@ -12,7 +12,8 @@ cookie.txt为配置地址，第一行为账号cookie值，直接F12全部复制�
 第二行为ticketid，同样也是F12查看 https://www.allcpp.cn/allcpp/ticket/getTicketTypeList.do?eventMainId=xxxx 的响应 一般为4位数字<br>
 以此类推，第三行第四行也是这样<br>
 config.txt 是配置文件 包括ntp服务器，间隔时长，线程数
-本程序支持多线程 多账户 （默认三线程）
+本程序支持多线程 多账户 （默认三线程）<br>
+默认实名票全部按照购票人设置数量购买，你绑定几个人买几份票，即默认全选
 
 ## 未来功能
 - [ ] 微信通知
