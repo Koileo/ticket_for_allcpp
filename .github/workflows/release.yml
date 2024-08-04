@@ -67,7 +67,7 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: ticket_for_allcpp-linux-amd64
-                path: dist/ticket_for_allcpp dist/ticket_for_allcpp-linux-amd64
+                path: dist/ticket_for_allcpp-linux-amd64
 
     macos-amd64:
         permissions: write-all
@@ -98,7 +98,7 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: ticket_for_allcpp-macos-amd64
-                path: dist/ticket_for_allcpp dist/ticket_for_allcpp-macos-amd64
+                path: dist/ticket_for_allcpp-macos-amd64
 
     Create-release:
         permissions: write-all
