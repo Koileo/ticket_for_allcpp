@@ -8,7 +8,8 @@ import string
 import hashlib
 import ntplib
 import configparser
-import os
+
+
 # 定义一个全局锁用于线程同步
 thread_dict = {}
 cookie_file_path = 'cookie.txt'
@@ -29,12 +30,14 @@ headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
         }
 
+
 # 读取配置文件
 def getConfig(filename, section, option):
     conf = configparser.ConfigParser()
     conf.read(filename)
     config = conf.get(section, option)
     return config
+
 
 def timeconvey(ntp):
     chec = ntplib.NTPClient() 
@@ -45,6 +48,7 @@ def timeconvey(ntp):
     #print(timestamp)
     differ= timestamp - timestamp_local
     return differ
+
 
 def sign_for_post(ticketid):
     timestamp = str(int(time.time())) ##"1682074579"
@@ -60,6 +64,7 @@ def sign_for_post(ticketid):
     vital='nonce='+nonce+'&timeStamp='+timestamp+'&sign='+sign
     return vital
 
+
 def cookie_string_to_dict(cookie_string):
     cookies = {}
     cookie_pairs = cookie_string.split("; ")
@@ -69,7 +74,6 @@ def cookie_string_to_dict(cookie_string):
         cookies[key] = value
     
     return cookies
-
 
 
 def read_cookies_and_tickets_from_file():
@@ -94,7 +98,6 @@ def read_cookies_and_tickets_from_file():
     return cookies, ticket_ids  # 返回两个列表作为一个元组
 
 
-
 def getpurser(cookie_str):
     cookies = cookie_string_to_dict(cookie_str)
     pur = requests.get(
@@ -107,7 +110,6 @@ def getpurser(cookie_str):
     return purrer_data
 
 
-
 def check_success(cookies,ticketid):
     url = 'https://www.allcpp.cn/allcpp/user/getMyOrderList.do?pageindex=1&pagesize=10&enabled=0&orderby=0'
     list = requests.get(
@@ -117,7 +119,7 @@ def check_success(cookies,ticketid):
     )
     listing = list.content.decode("utf-8")
     data = json.loads(listing)
-# 遍历订单信息
+    # 遍历订单信息
     for order in data['result']['list']:
         if order['ticketTypeId'] == ticketid:
             return True
@@ -125,11 +127,8 @@ def check_success(cookies,ticketid):
             return False
 
 
-
-
 def process_thread(ticketid,cookie_str):
     cookies = cookie_string_to_dict(cookie_str)
-    verify_ssl = False
 
     pur = requests.get(
         url='https://www.allcpp.cn/allcpp/user/purchaser/getList.do',
@@ -231,7 +230,6 @@ def process_thread(ticketid,cookie_str):
                     time.sleep(sleep_time)
 
 
-
 def start(cookies, ticket_ids):
     thread_dict = {}
 
@@ -242,7 +240,6 @@ def start(cookies, ticket_ids):
                 cook = cookies[i]
                 thread = threading.Thread(target=process_thread, args=(ticket, cook))
                 thread.start()
-
 
 
 def schedule_script_at_timestamp(target_timestamp_ms,cookies, ticket_ids):
@@ -259,7 +256,6 @@ def schedule_script_at_timestamp(target_timestamp_ms,cookies, ticket_ids):
             start(cookies, ticket_ids)
         t = threading.Thread(target=delayed_execution)
         t.start()
-
 
 
 def main():
