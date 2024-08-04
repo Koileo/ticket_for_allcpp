@@ -117,6 +117,8 @@ jobs:
                 mv ./ticket_for_allcpp-macos-amd64/ticket_for_allcpp-macos-amd64 ./releases/ticket_for_allcpp-macos-amd64
                 mv ./ticket_for_allcpp-linux-amd64/ticket_for_allcpp-linux-amd64 ./releases/ticket_for_allcpp-linux-amd64
                 mv ./ticket_for_allcpp-windows-amd64/ticket_for_allcpp.exe ./releases/ticket_for_allcpp-windows-amd64.exe
+                cp config.txt ./releases/config.txt
+                cp cookie.txt ./releases/cookie.txt
 
           - name: Create Release
             id: create_release
