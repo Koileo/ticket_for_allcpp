@@ -30,14 +30,13 @@ jobs:
           - name: Pyinstaller
             run: |
                 pyinstaller ticket_for_allcpp.spec
-                Rename-Item -Path "dist/ticket_for_allcpp.exe" -NewName "dist/ticket_for_allcpp-windows-amd64.exe"
             shell: pwsh
     
           - name: Upload Windows File
             uses: actions/upload-artifact@v3
             with:
                 name: ticket_for_allcpp-windows-amd64
-                path: dist/ticket_for_allcpp-windows-amd64.exe
+                path: dist/ticket_for_allcpp.exe
 
     Linux-amd64:
         permissions: write-all
@@ -117,7 +116,7 @@ jobs:
                 mkdir releases
                 mv ./ticket_for_allcpp-macos-amd64/ticket_for_allcpp-macos-amd64 ./releases/ticket_for_allcpp-macos-amd64
                 mv ./ticket_for_allcpp-linux-amd64/ticket_for_allcpp-linux-amd64 ./releases/ticket_for_allcpp-linux-amd64
-                mv ./ticket_for_allcpp-windows-amd64/ticket_for_allcpp-windows-amd64.exe ./releases/ticket_for_allcpp-windows-amd64.exe
+                mv ./ticket_for_allcpp-windows-amd64/ticket_for_allcpp.exe ./releases/ticket_for_allcpp-windows-amd64.exe
 
           - name: Create Release
             id: create_release
