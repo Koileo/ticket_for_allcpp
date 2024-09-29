@@ -128,38 +128,41 @@ def check_success(cookies,ticketid):
 
 
 def process_thread(ticketid,cookie_str):
-    cookies = cookie_string_to_dict(cookie_str)
+    try:
+        cookies = cookie_string_to_dict(cookie_str)
 
-    pur = requests.get(
-        url='https://www.allcpp.cn/allcpp/user/purchaser/getList.do',
-        cookies=cookies,
-        headers=headers,
-    )
-
-    purrer = pur.content.decode("utf-8")
-    purrer_data = json.loads(purrer)
-    print(purrer_data)
-    ids = [str(item["id"]) for item in purrer_data]
-    ids_str = ",".join(ids)
-    id_count = len(ids)
-    print(f"IDs for ticket {ticketid}: {ids_str}")
-    json_data = {}
-
-
-    retn_params = sign_for_post(ticketid)
-    url = 'https://www.allcpp.cn/allcpp/ticket/buyTicketAliWapPay.do?ticketTypeId=' + str(ticketid) + '&count=' + str(
-            id_count) + '&' + retn_params + '&purchaserIds=' + ids_str
-    print(url)
-    response = requests.post(
-            url=url,
+        pur = requests.get(
+            url='https://www.allcpp.cn/allcpp/user/purchaser/getList.do',
             cookies=cookies,
             headers=headers,
-            json=json_data,
-    )
-    resp = response.content.decode("utf-8")
-    parsed_resp = json.loads(resp)
-    print(parsed_resp)
+        )
 
+        purrer = pur.content.decode("utf-8")
+        purrer_data = json.loads(purrer)
+        print(purrer_data)
+        ids = [str(item["id"]) for item in purrer_data]
+        ids_str = ",".join(ids)
+        id_count = len(ids)
+        print(f"IDs for ticket {ticketid}: {ids_str}")
+        json_data = {}
+
+
+        retn_params = sign_for_post(ticketid)
+        url = 'https://www.allcpp.cn/allcpp/ticket/buyTicketAliWapPay.do?ticketTypeId=' + str(ticketid) + '&count=' + str(
+                id_count) + '&' + retn_params + '&purchaserIds=' + ids_str
+        print(url)
+        response = requests.post(
+                url=url,
+                cookies=cookies,
+                headers=headers,
+                json=json_data,
+        )
+        resp = response.content.decode("utf-8")
+        parsed_resp = json.loads(resp)
+        print(parsed_resp)
+    except:
+        pass
+    
     i = 0
     if parsed_resp.get("isSuccess") == True:
         print(f"Thread for ticket {ticketid} succeeded")
