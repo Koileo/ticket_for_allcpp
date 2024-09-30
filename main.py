@@ -176,36 +176,12 @@ def process_thread(ticketid,cookie_str):
         return True
     else:
         while i < 2:
-            with open(f"output_ticket_{ticketid}_{ids_str}_attempt_{i}.txt", "a") as output_file:
-                output_file.write(resp)
-            retn_params = sign_for_post(ticketid)
-            url = 'https://www.allcpp.cn/allcpp/ticket/buyTicketAliWapPay.do?ticketTypeId=' + str(ticketid) + '&count=' + str(
-                id_count) + '&' + retn_params +'&purchaserIds=' + ids_str
-            print(url)
-            response = requests.post(
-                url=url,
-                cookies=cookies,
-                headers=headers,
-                json=json_data,
-            )
-            resp = response.content.decode("utf-8")
-            parsed_resp = json.loads(resp)
-            print(parsed_resp)
-            is_success = parsed_resp["isSuccess"]
-            if is_success == True:
-                i = 3
-                print(f"Thread for ticket {ticketid} succeeded")
-                with open(f"output_ticket_{ticketid}_{ids_str}.txt", "a") as output_file:
+            try:
+                with open(f"output_ticket_{ticketid}_{ids_str}_attempt_{i}.txt", "a") as output_file:
                     output_file.write(resp)
-                threads_to_close = [thread for thread in threads if thread._target == process_thread and thread._args[0] == ticketid and thread._args[1] == cookies]
-                for thread_to_close in threads_to_close[:2]:  # 关闭同类型的前两个线程
-                    thread_to_close.join()
-                return True
-            else:
-                with open(f"output_ticket_{ticketid}_{ids_str}_attempt.txt", "a") as output_file:
-                    output_file.write(resp)
-                    url = 'https://www.allcpp.cn/allcpp/ticket/buyTicketAliWapPay.do?ticketTypeId=' + str(ticketid) + '&count=' + str(
-                id_count) + '&' + retn_params +'&purchaserIds=' + ids_str
+                retn_params = sign_for_post(ticketid)
+                url = 'https://www.allcpp.cn/allcpp/ticket/buyTicketAliWapPay.do?ticketTypeId=' + str(ticketid) + '&count=' + str(
+                    id_count) + '&' + retn_params +'&purchaserIds=' + ids_str
                 print(url)
                 response = requests.post(
                     url=url,
@@ -215,22 +191,49 @@ def process_thread(ticketid,cookie_str):
                 )
                 resp = response.content.decode("utf-8")
                 parsed_resp = json.loads(resp)
+                print(parsed_resp)
                 is_success = parsed_resp["isSuccess"]
                 if is_success == True:
-                        i = 3
-                        print(f"Thread for ticket {ticketid} succeeded")
-                        with open(f"output_ticket_{ticketid}_{ids_str}.txt", "a") as output_file:
-                            output_file.write(resp)
-                        threads_to_close = [thread for thread in threads if thread._target == process_thread and thread._args[0] == ticketid and thread._args[1] == cookies]
-                        for thread_to_close in threads_to_close[:2]:  # 关闭同类型的前两个线程
-                            thread_to_close.join()
-                        return True
+                    i = 3
+                    print(f"Thread for ticket {ticketid} succeeded")
+                    with open(f"output_ticket_{ticketid}_{ids_str}.txt", "a") as output_file:
+                        output_file.write(resp)
+                    threads_to_close = [thread for thread in threads if thread._target == process_thread and thread._args[0] == ticketid and thread._args[1] == cookies]
+                    for thread_to_close in threads_to_close[:2]:  # 关闭同类型的前两个线程
+                        thread_to_close.join()
+                    return True
                 else:
                     with open(f"output_ticket_{ticketid}_{ids_str}_attempt.txt", "a") as output_file:
                         output_file.write(resp)
-                    print(resp)
-                    print(type(resp))
-                    time.sleep(sleep_time)
+                        url = 'https://www.allcpp.cn/allcpp/ticket/buyTicketAliWapPay.do?ticketTypeId=' + str(ticketid) + '&count=' + str(
+                    id_count) + '&' + retn_params +'&purchaserIds=' + ids_str
+                    print(url)
+                    response = requests.post(
+                        url=url,
+                        cookies=cookies,
+                        headers=headers,
+                        json=json_data,
+                    )
+                    resp = response.content.decode("utf-8")
+                    parsed_resp = json.loads(resp)
+                    is_success = parsed_resp["isSuccess"]
+                    if is_success == True:
+                            i = 3
+                            print(f"Thread for ticket {ticketid} succeeded")
+                            with open(f"output_ticket_{ticketid}_{ids_str}.txt", "a") as output_file:
+                                output_file.write(resp)
+                            threads_to_close = [thread for thread in threads if thread._target == process_thread and thread._args[0] == ticketid and thread._args[1] == cookies]
+                            for thread_to_close in threads_to_close[:2]:  # 关闭同类型的前两个线程
+                                thread_to_close.join()
+                            return True
+                    else:
+                        with open(f"output_ticket_{ticketid}_{ids_str}_attempt.txt", "a") as output_file:
+                            output_file.write(resp)
+                        print(resp)
+                        print(type(resp))
+                        time.sleep(sleep_time)
+            except:
+                pass
 
 
 def start(cookies, ticket_ids):
